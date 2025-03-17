@@ -3,7 +3,6 @@ package main
 import (
 	"bytes"
 	"encoding/binary"
-	"encoding/hex"
 	"fmt"
 	"math/big"
 	"time"
@@ -12,7 +11,6 @@ import (
 	"github.com/fxfactorial/accumulator/group"
 	h "github.com/fxfactorial/accumulator/hash"
 	"github.com/fxfactorial/accumulator/hash/primality"
-	"github.com/fxfactorial/accumulator/proof"
 	"github.com/google/uuid"
 )
 
@@ -29,14 +27,6 @@ type utxo struct {
 }
 
 type set []utxo
-
-func toStringInt(b *big.Int) string {
-	return hex.EncodeToString(b.Bytes())
-}
-
-func toStringBuffer(b *bytes.Buffer) string {
-	return hex.EncodeToString(b.Bytes())
-}
 
 func (utxo set) hashToPrimeBlake2b(record utxo) uint64 {
 	payload, _ := record.id.MarshalBinary()
@@ -107,42 +97,7 @@ func (utxo set) Compute() (uint64, uint64) {
 	return 0, 0
 }
 
-type transaction struct {
-	utxosCreated          []interface{}
-	utxosSpentWithWitness []interface{}
-}
-
-type block struct {
-	height       uint64
-	transactions []transaction
-	accNew       accumulator.Tracker
-	proofAdded   proof.Membership
-	proofDeleted proof.Membership
-}
-
-type handler func()
-
-type broadCastQueue struct {
-	listeners []handler
-}
-
-func newQueue() *broadCastQueue {
-	return &broadCastQueue{[]handler{}}
-}
-
-func (q *broadCastQueue) addToQueue(h handler) {
-	q.listeners = append(q.listeners, h)
-}
-
 func runSimulation() {
-	blockSenderReceiverQueue, txnSenderReceiverQueue := newQueue(), newQueue()
-	go func() {
-		// handle one queue
-	}()
-	go func() {
-		// handle the other queue
-	}()
-	fmt.Println("start simulation", blockSenderReceiverQueue, txnSenderReceiverQueue)
 	userUtxos := make(set, totalNumUsers)
 	for i := 0; i < totalNumUsers; i++ {
 		id, _ := uuid.NewUUID()
@@ -156,7 +111,7 @@ func runSimulation() {
 
 func main() {
 	runSimulation()
-	accumSet := []interface{}{}
-	accum := accumulator.New(group.RSA2048)
-	fmt.Println(accumSet, accum)
+	// accumSet := []interface{}{}
+	// accum := accumulator.New(group.RSA2048)
+	// fmt.Println(accumSet, accum)
 }
